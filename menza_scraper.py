@@ -1,4 +1,8 @@
 from playwright.sync_api import sync_playwright
+import os
+
+EMAIL = os.getenv("MENZA_EMAIL")
+PASSWORD = os.getenv("MENZA_PASSWORD")
 
 def run():
     with sync_playwright() as p:
@@ -8,7 +12,38 @@ def run():
         print("Opening site...")
         page.goto("https://app.menza.ai")
 
+        #Step 1: Enter email
+        print("Waiting for email input...")
+        page.wait_for_selector('#identifier-field')
+
+        print("Entering email...")
+        page.fill('#identifier-field', EMAIL)
+
+        print("Clicking Continue (email step)...")
+        page.locator('button:has-text("Continue")').nth(1).click()
+
+        # Step 2: Use another method
+        print("Waiting for 'Use another method'...")
+        page.get_by_text("Use another method").click()
+
+        # Step 3: Choose password login
+        print("Selecting password login...")
+        page.get_by_text("Sign in with your password").click()
+
+        # Step 4: Enter password
+        print("Waiting for password input...")
+        page.wait_for_selector('#password-field')
+
+        print("Entering password...")
+        page.fill('#password-field', PASSWORD)
+
+        print("Clicking Continue (password step)...")
+        page.get_by_role("button", name="Continue").click()
+
+        # Wait for login to complete
         page.wait_for_timeout(5000)
+
+        print("Login flow completed")
 
         browser.close()
 

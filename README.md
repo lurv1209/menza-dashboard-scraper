@@ -1,6 +1,4 @@
-# Project Title
-
-**Menza AI Scraper**
+# **Menza AI Platform Scraper**
 
 ## Description
 
@@ -59,7 +57,7 @@ python extract_dashboards.py
 
 3. Both files are ignored by Git and are regenerated on each run.
 
-### Example Output
+<!-- ### Example Output -->
 
 ## Notes
 

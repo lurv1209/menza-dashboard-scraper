@@ -1,8 +1,9 @@
 from playwright.sync_api import sync_playwright
-import os
+from dotenv import dotenv_values
 
-EMAIL = os.getenv("MENZA_EMAIL")
-PASSWORD = os.getenv("MENZA_PASSWORD")
+config = dotenv_values(".env")
+EMAIL = config["MENZA_EMAIL"]
+PASSWORD = config["MENZA_PASSWORD"]
 
 def run():
     with sync_playwright() as p:
@@ -41,7 +42,7 @@ def run():
         page.get_by_role("button", name="Continue").click()
 
         # Wait for login to complete
-        page.wait_for_timeout(5000)
+        page.wait_for_timeout(10000)
 
         print("Login flow completed")
 

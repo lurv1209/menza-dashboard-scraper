@@ -1,3 +1,4 @@
 __pycache__/
 .env
 dashboards.txt
+.venv/

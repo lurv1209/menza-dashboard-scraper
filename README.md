@@ -6,8 +6,8 @@ This project is a Python-based scraper using **Playwright** to log into the Menz
 
 It automatically saves the dashboard data in two formats:
 
-1. **`dashboards.json`** — structured JSON containing `name`, `owner`, `last_modified`, and `url` for each dashboard
-2. **`dashboard_names.txt`** — plain text file listing only dashboard names
+1. **`dashboards.json`** - structured JSON containing `name`, `owner`, `last_modified`, and `url` for each dashboard
+2. **`dashboard_names.txt`** - plain text file listing only dashboard names
 
 The script handles dashboard names containing `"You"` correctly and can be run repeatedly to fetch the latest dashboard information.
 
@@ -29,8 +29,8 @@ The script handles dashboard names containing `"You"` correctly and can be run r
 1. Clone this repository:
 
 ```bash
-git clone https://github.com/your-username/menza-scraper.git
-cd menza-scraper
+git clone https://github.com/lurv1209/menza-dashboard-scraper.git
+cd menza-dashboard-scraper
 ```
 
 2. Install Python dependencies:

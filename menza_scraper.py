@@ -1,6 +1,7 @@
 from playwright.sync_api import sync_playwright
 from dotenv import dotenv_values
 import re
+import json
 
 config = dotenv_values(".env")
 EMAIL = config["MENZA_EMAIL"]
@@ -54,16 +55,33 @@ def run():
             page.wait_for_selector('a[href*="/dashboards/"]')
 
             dashboard_links = page.locator('a[href*="/dashboards/"]')
+            texts = dashboard_links.all_text_contents()
+            urls = [link.get_attribute("href") for link in dashboard_links.element_handles()]
 
-            titles = []
-            for text in dashboard_links.all_text_contents():
-                # Remove the owner + time info at the end (e.g., You7 hours ago)
-                cleaned = re.sub(r'You\d+\s+(hours?|days?)\s+ago$', '', text).strip()
-                titles.append(cleaned)
+            dashboard_data = []
 
-            print("Dashboard titles:\n")
-            for t in titles:
-                print("-", t)
+            for raw_text, url in zip(texts, urls):
+                # Extract name, owner, last_modified using regex
+                match = re.match(r"(.+?)(You)([\d\s\w]+ago)$", raw_text)
+                if match:
+                    name = match.group(1).strip()
+                    owner = match.group(2).strip()
+                    last_modified = match.group(3).strip()
+                else:
+                    name = raw_text
+                    owner = None
+                    last_modified = None
+
+                dashboard_data.append({
+                    "name": name,
+                    "owner": owner,
+                    "last_modified": last_modified,
+                    "url": url
+                })
+
+            # Save to JSON
+            with open("dashboards.json", "w") as f:
+                json.dump(dashboard_data, f, indent=2)
         except Exception as e:
             print("Error:", e)
         finally:

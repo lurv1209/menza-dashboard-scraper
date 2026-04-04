@@ -1,5 +1,6 @@
 from playwright.sync_api import sync_playwright
 from dotenv import dotenv_values
+import re
 
 config = dotenv_values(".env")
 EMAIL = config["MENZA_EMAIL"]
@@ -7,7 +8,7 @@ PASSWORD = config["MENZA_PASSWORD"]
 
 def run():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(headless=True)
         page = browser.new_page()
 
 
@@ -54,10 +55,11 @@ def run():
 
             dashboard_links = page.locator('a[href*="/dashboards/"]')
 
-            titles = [
-                text.split(" You ")[0].strip()
-                for text in dashboard_links.all_text_contents()
-            ]
+            titles = []
+            for text in dashboard_links.all_text_contents():
+                # Remove the owner + time info at the end (e.g., You7 hours ago)
+                cleaned = re.sub(r'You\d+\s+(hours?|days?)\s+ago$', '', text).strip()
+                titles.append(cleaned)
 
             print("Dashboard titles:\n")
             for t in titles:

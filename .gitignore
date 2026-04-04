@@ -1,4 +1,5 @@
 __pycache__/
 .env
-dashboards.txt
 .venv/
+dashboards.json
+dashboard_names.txt

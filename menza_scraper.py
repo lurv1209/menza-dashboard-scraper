@@ -76,12 +76,19 @@ def run():
                     "name": name,
                     "owner": owner,
                     "last_modified": last_modified,
-                    "url": url
+                    "url": "https://app.menza.ai/" + url.lstrip('/')
                 })
 
             # Save to JSON
             with open("dashboards.json", "w") as f:
                 json.dump(dashboard_data, f, indent=2)
+
+            # Save just the names
+            with open("dashboard_names.txt", "w") as f:
+                for d in dashboard_data:
+                    f.write(d["name"] + "\n")
+
+            print("Dashboard JSON and names file created successfully!")
         except Exception as e:
             print("Error:", e)
         finally:

@@ -19,5 +19,5 @@ playwright install
 echo ""
 echo "Setup complete!"
 echo "Next steps:"
-echo "1. Create a .env file with your credentials"
+echo "1. Create a .env file with your credentials (see .env.example for reference)"
 echo "2. Run: python extract_dashboards.py"

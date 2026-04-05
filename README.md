@@ -89,9 +89,20 @@ MENZA_PASSWORD=your_password
 
 ### 4. Run the scraper
 
-```bash
+**Default (headless browser):**
+
+```
 python extract_dashboards.py
 ```
+
+**Run with browser visible (headed mode) for debugging:**
+
+```
+python extract_dashboards.py false
+```
+
+- true or 1 → headless (default)
+- false, 0, no → headed (browser visible)
 
 After running, the following files will be created automatically:
 

@@ -3,12 +3,17 @@ from dotenv import dotenv_values
 import re
 import json
 import logging
+import sys
 
 logging.basicConfig(level=logging.INFO)
 
 config = dotenv_values(".env")
 EMAIL = config["MENZA_EMAIL"]
 PASSWORD = config["MENZA_PASSWORD"]
+
+# Default to headless
+headless_arg = sys.argv[1].lower() if len(sys.argv) > 1 else "true"
+HEADLESS = headless_arg in ["true", "1", "yes"]
 
 def retry(action, retries=3, delay=2):
     import time
@@ -28,13 +33,14 @@ def click_if_exists(page, selectors, timeout=3000):
             locator.wait_for(state="visible", timeout=timeout)
             locator.click()
             return True
-        except:
-            continue
+        except Exception as e:
+            logging.debug(f"Selector failed: {sel} -> {e}")
     return False
 
 def run():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        logging.info(f"Launching browser headless={HEADLESS}")
+        browser = p.chromium.launch(headless=HEADLESS)
         page = browser.new_page()
 
         try:
@@ -72,6 +78,7 @@ def run():
 
             logging.info("Entering password...")
             page.fill('#password-field', PASSWORD)
+
 
             logging.info("Clicking Continue (password step)...")
             retry(lambda: page.get_by_role("button", name="Continue").click())
@@ -125,6 +132,19 @@ def run():
                     "last_modified": last_modified,
                     "url": "https://app.menza.ai/" + url.lstrip('/')
                 })
+            
+            # Deduplicate
+            seen = set()
+            unique_dashboards = []
+
+            for d in dashboard_data:
+                if d["url"] not in seen:
+                    seen.add(d["url"])
+                    unique_dashboards.append(d)
+
+            dashboard_data = unique_dashboards
+
+            dashboard_data.sort(key=lambda x: x["name"].lower())
 
             # Save to JSON
             with open("dashboards.json", "w") as f:

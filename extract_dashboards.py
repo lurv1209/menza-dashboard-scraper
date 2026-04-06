@@ -1,3 +1,4 @@
+import os
 from playwright.sync_api import sync_playwright
 from dotenv import dotenv_values
 import re
@@ -5,7 +6,16 @@ import json
 import logging
 import sys
 
-logging.basicConfig(level=logging.INFO)
+LOG_FILE = os.path.join(os.path.dirname(__file__), "scraper.log")
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler(LOG_FILE),
+        logging.StreamHandler()
+    ]
+)
 
 config = dotenv_values(".env")
 EMAIL = config["MENZA_EMAIL"]
@@ -79,6 +89,7 @@ def run():
             logging.info("Entering password...")
             page.fill('#password-field', PASSWORD)
 
+            page.pause()
 
             logging.info("Clicking Continue (password step)...")
             retry(lambda: page.get_by_role("button", name="Continue").click())
@@ -115,21 +126,22 @@ def run():
             dashboard_data = []
 
             for raw_text, url in zip(texts, urls):
-                # Extract name, owner, last_modified using regex
-                match = re.match(r"(.+?)(You)([\d\s\w]+ago)$", raw_text)
-                if match:
-                    name = match.group(1).strip()
-                    owner = match.group(2).strip()
-                    last_modified = match.group(3).strip()
-                else:
-                    name = raw_text
-                    owner = None
-                    last_modified = None
+                parts = raw_text.split("You", 1)
+
+                name = parts[0].strip()
+                owner = "You" if len(parts) > 1 else None
+                rest = parts[1] if len(parts) > 1 else ""
+
+                times = re.findall(r"\d+\s+\w+\s+ago", rest)
+
+                updated_at = times[0] if len(times) > 0 else None
+                created_at = times[1] if len(times) > 1 else None
 
                 dashboard_data.append({
                     "name": name,
                     "owner": owner,
-                    "last_modified": last_modified,
+                    "last_updated": updated_at,
+                    "created": created_at,
                     "url": "https://app.menza.ai/" + url.lstrip('/')
                 })
             
@@ -155,6 +167,7 @@ def run():
                 for d in dashboard_data:
                     f.write(d["name"] + "\n")
 
+            logging.info(f"Extracted {len(dashboard_data)} dashboards")
             logging.info("Dashboard JSON and names file created successfully!")
         except Exception as e:
             logging.error(f"Error: {e}")

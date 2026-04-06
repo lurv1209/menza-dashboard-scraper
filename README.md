@@ -6,10 +6,27 @@ This project is a Python-based scraper using **Playwright** to log into the Menz
 
 It automatically saves the dashboard data in two formats:
 
-1. **`dashboards.json`** - structured JSON containing `name`, `owner`, `last_modified`, and `url` for each dashboard
+1. **`dashboards.json`** - structured JSON containing (for each dashboard):
+   - `name`
+   - `owner`
+   - `created_at`
+   - `updated_at`
+   - `url`
 2. **`dashboard_names.txt`** - plain text file listing only dashboard names
 
 The script handles dashboard names containing `"You"` without incorrect parsing and can be run repeatedly to fetch the latest dashboard information.
+
+---
+
+## Approach
+
+- Automated login using Playwright
+- Implemented retry logic to handle transient UI/network issues
+- Used flexible selectors to handle UI changes
+- Extracted dashboard data using robust parsing
+- Added deduplication and sorting for consistent outputs
+- Implemented cross-platform scheduling (Windows Task Scheduler and cron)
+- Added logging for observability of scheduled runs
 
 ---
 
@@ -80,7 +97,11 @@ playwright install
 
 ### 3. Configure environment variables
 
-Create a .env file in the project root:
+If you used the automated setup, a `.env` file will be created automatically.
+
+Otherwise (manual setup), create a `.env` file in the project root. (see `.env.example` for reference)
+
+Update it with your credentials:
 
 ```
 MENZA_EMAIL=your_email
@@ -111,14 +132,29 @@ After running, the following files will be created automatically:
 
 Note: Both files are ignored by Git and are regenerated on each run.
 
-<!-- ### Example Output -->
+### 5. (Optional) Schedule automatic runs
+
+You can schedule the scraper to run hourly:
+
+```bash
+python schedule_task.py
+```
+
+**On Windows**: creates a `Task Scheduler` job
+
+**On macOS/Linux**: adds a `cron` job
+
+Logs are written to `scraper.log`.
 
 ## Notes
 
 - The script runs headless by default but can be run with a visible browser for debugging.
 - Handles dashboard names containing "You" correctly to avoid truncation.
 - Both output files are regenerated each time the script is executed.
-- The .env file stores credentials and should never be committed.
+- The `.env` file stores credentials and should never be committed.
+- The scraper is designed to handle UI changes by using flexible selectors and retry logic.
+- Data extraction is implemented defensively to avoid breaking when the UI structure changes.
+- All runs (manual and scheduled) are logged to `scraper.log`.
 
 ## Authors
 

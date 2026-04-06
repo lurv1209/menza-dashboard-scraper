@@ -89,8 +89,6 @@ def run():
             logging.info("Entering password...")
             page.fill('#password-field', PASSWORD)
 
-            page.pause()
-
             logging.info("Clicking Continue (password step)...")
             retry(lambda: page.get_by_role("button", name="Continue").click())
 

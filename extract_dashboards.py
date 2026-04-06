@@ -57,12 +57,30 @@ def run():
             logging.info("Opening site...")
             retry(lambda: page.goto("https://app.menza.ai"))
 
-            #Step 1: Enter email
+            # Step 1: Enter email
             logging.info("Waiting for email input...")
-            page.wait_for_selector('#identifier-field')
 
-            logging.info("Entering email...")
-            page.fill('#identifier-field', EMAIL)
+            # Try multiple ways to locate the email textbox
+            email_selectors = [
+                'label:text("Email address")',                   # Preferred: label text
+                'input[placeholder="Enter your email address"]', # Fallback: placeholder
+                '#identifier-field'                              # Last-resort: ID
+            ]
+
+            email_filled = False
+            for sel in email_selectors:
+                try:
+                    locator = page.locator(sel).first
+                    locator.wait_for(state="visible", timeout=5000)
+                    logging.info(f"Filling email using selector: {sel}")
+                    locator.fill(EMAIL)
+                    email_filled = True
+                    break
+                except Exception as e:
+                    logging.debug(f"Selector failed: {sel} -> {e}")
+
+            if not email_filled:
+                raise Exception("Could not find email input field using any selector.")
 
             logging.info("Clicking Continue (email step)...")
             retry(lambda: page.get_by_role("button", name="Continue", exact=True).click())
@@ -84,10 +102,27 @@ def run():
 
             # Step 4: Enter password
             logging.info("Waiting for password input...")
-            page.wait_for_selector('#password-field')
 
-            logging.info("Entering password...")
-            page.fill('#password-field', PASSWORD)
+            password_selectors = [
+                'label:text("Password")',                      # Preferred: label text
+                'input[placeholder="Enter your password"]',    # Fallback: placeholder
+                '#password-field'                              # Last-resort: ID
+            ]
+
+            password_filled = False
+            for sel in password_selectors:
+                try:
+                    locator = page.locator(sel).first
+                    locator.wait_for(state="visible", timeout=5000)
+                    logging.info(f"Filling password using selector: {sel}")
+                    locator.fill(PASSWORD)
+                    password_filled = True
+                    break
+                except Exception as e:
+                    logging.debug(f"Selector failed: {sel} -> {e}")
+
+            if not password_filled:
+                raise Exception("Could not find password input field using any selector.")
 
             logging.info("Clicking Continue (password step)...")
             retry(lambda: page.get_by_role("button", name="Continue").click())

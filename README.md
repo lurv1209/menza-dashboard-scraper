@@ -9,7 +9,7 @@ It automatically saves the dashboard data in two formats:
 1. **`dashboards.json`** - structured JSON containing (for each dashboard):
    - `name`
    - `owner`
-   - `created_at`
+   - `created`
    - `updated_at`
    - `url`
 2. **`dashboard_names.txt`** - plain text file listing only dashboard names
@@ -99,7 +99,7 @@ playwright install
 
 If you used the automated setup, a `.env` file will be created automatically.
 
-Otherwise (manual setup), create a `.env` file in the project root. (see `.env.example` for reference)
+Otherwise, for manual setup, create a `.env` file in the project root. (see `.env.example` for reference)
 
 Update it with your credentials:
 
@@ -123,7 +123,7 @@ python extract_dashboards.py false
 ```
 
 - true or 1 → headless (default)
-- false, 0, no → headed (browser visible)
+- false, 0, no → headed (browser visible, for debugging)
 
 After running, the following files will be created automatically:
 

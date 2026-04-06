@@ -58,7 +58,7 @@ cd menza-dashboard-scraper
 
 ```bash
 chmod +x setup.sh
-source setup.sh
+./setup.sh
 ```
 
 This will:

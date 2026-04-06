@@ -50,21 +50,39 @@ git clone https://github.com/lurv1209/menza-dashboard-scraper.git
 cd menza-dashboard-scraper
 ```
 
+---
+
 ### 2. Setup the project
 
 #### Option A: Automated Setup
 
 ```bash
 chmod +x setup.sh
-./setup.sh
+source setup.sh
 ```
 
 This will:
 
 - Create a virtual environment
-- Activate it
 - Install dependencies
 - Install Playwright browsers
+- Create a `.env` file from the template (if it doesn’t exist)
+
+After this, activate the virtual environment before running the scraper:
+
+#### macOS/Linux
+
+`source .venv/bin/activate`
+
+#### Windows (Git Bash)
+
+`source .venv/Scripts/activate`
+
+#### Windows PowerShell
+
+`.venv\Scripts\Activate.ps1`
+
+---
 
 #### Option B: Manual Setup
 
@@ -95,6 +113,8 @@ pip install -r requirements.txt
 playwright install
 ```
 
+---
+
 ### 3. Configure environment variables
 
 If you used the automated setup, a `.env` file will be created automatically.
@@ -107,6 +127,8 @@ Update it with your credentials:
 MENZA_EMAIL=your_email
 MENZA_PASSWORD=your_password
 ```
+
+---
 
 ### 4. Run the scraper
 
@@ -131,6 +153,8 @@ After running, the following files will be created automatically:
 - **dashboard_names.txt** → list of dashboard names
 
 Note: Both files are ignored by Git and are regenerated on each run.
+
+---
 
 ### 5. (Optional) Schedule automatic runs
 
